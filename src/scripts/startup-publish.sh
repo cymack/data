@@ -15,7 +15,7 @@
 # limitations under the License.
 
 #######################################
-# Run data pipelines and upload outputs to GCS
+# Download latest data for all pipelines and publish outputs to GCS prod bucket
 #######################################
 
 # This is brittle but prevents from continuing in case of failure since we don't want to overwrite
@@ -23,9 +23,7 @@
 set -xe
 
 # TODO: read from env vars
-readonly BRANCH=gcloud
-readonly TABLE=hospitalizations
-readonly GCS_BUCKET_NAME=open-covid-data
+readonly BRANCH=appengine
 
 # Install dependencies using the package manager
 export DEBIAN_FRONTEND=noninteractive
@@ -53,5 +51,4 @@ install_python
 python3.8 -m pip install -r "$TMPDIR/opencovid/src/requirements.txt"
 
 # Run the update command
-export GCS_BUCKET_NAME
-python3.8 "$TMPDIR/opencovid/src/scripts/gcloud.py" update --table $TABLE
+python3.8 "$TMPDIR/opencovid/src/appengine.py" --command publish

@@ -13,8 +13,8 @@
 # limitations under the License.
 
 from typing import Iterator
+from lib.constants import SRC
 from lib.pipeline import DataPipeline
-from lib.utils import SRC
 
 
 def get_pipeline_names() -> Iterator[str]:
@@ -22,6 +22,11 @@ def get_pipeline_names() -> Iterator[str]:
     for item in (SRC / "pipelines").iterdir():
         if not item.name.startswith("_") and not item.is_file():
             yield item.name
+
+
+def get_table_names() -> Iterator[str]:
+    for pipeline_name in get_pipeline_names():
+        yield pipeline_name.replace("_", "-")
 
 
 def get_pipelines() -> Iterator[DataPipeline]:

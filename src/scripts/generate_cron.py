@@ -39,24 +39,31 @@ from lib.pipeline_tools import get_pipelines
 def get_cron_jobs() -> Iterator[Dict]:
     """ Iterator of cron job configurations """
 
+    # Define the schedules and reuse them across all applicable tasks
+    sched_hourly = {"schedule": "every 1 hours"}
+
     # Apply sensible retry parameters for all cron jobs
     retry_params = {"retry_parameters": {"min_backoff_seconds": 60, "max_doublings": 5}}
 
-    # Define the schedules and reuse them across all tasks
-    sched_hourly = {"schedule": "every 1 hours"}
+    # The job that publishes data into the prod bucket runs every 4 hours
+    # We don't want to publish data right away, because often data sources will push data
+    # and then push a correction after 1-2 hours
+    yield {"url": f"/publish", "schedule": "every 4 hours", **copy.deepcopy(retry_params)}
 
     for data_pipeline in get_pipelines():
         # The job that combines data sources into a table runs hourly
         yield {
-            "url": f"/combine?table={data_pipeline.table}",
+            "url": f"/combine_table?table={data_pipeline.table}",
             **copy.deepcopy(sched_hourly),
             **copy.deepcopy(retry_params),
         }
 
         for idx, _ in enumerate(data_pipeline.data_sources):
-            # The job to pull each individual data source runs hourly
+            # The job to pull each individual data source runs hourly unless specified otherwise
+            # TODO(owahltinez): add parameter to YAML config data sources to allow override of
+            # default scheduling
             yield {
-                "url": f"/update?table={data_pipeline.table}&idx={idx}",
+                "url": f"/update_table?table={data_pipeline.table}&idx={idx}",
                 **copy.deepcopy(sched_hourly),
                 **copy.deepcopy(retry_params),
             }
