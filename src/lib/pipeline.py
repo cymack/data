@@ -53,6 +53,9 @@ class DataPipeline(ErrorLogger):
     name: str
     """ The name of this module """
 
+    table: str
+    """ The name of the table corresponding to this pipeline """
+
     schema: Dict[str, Any]
     """ Names and corresponding dtypes of output columns """
 
@@ -73,6 +76,7 @@ class DataPipeline(ErrorLogger):
         self.name = name
         self.schema = schema
         self.data_sources = data_sources
+        self.table = name.replace("_", "-")
 
         # Metadata table can be overridden but must always be present
         auxiliary = {"metadata": SRC / "data" / "metadata.csv", **auxiliary}
