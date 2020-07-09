@@ -180,7 +180,7 @@ def publish() -> None:
         publish_tables(workdir / "public", workdir / "tables", show_progress=False)
 
         # Upload the results to the prod bucket
-        upload_folder(GCS_BUCKET_TEST, "", workdir / "public")
+        upload_folder(GCS_BUCKET_PROD, "", workdir / "public")
 
     return "OK"
 

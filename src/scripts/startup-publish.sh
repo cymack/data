@@ -22,12 +22,16 @@
 # files in the server if anything went wrong
 set -xe
 
-# TODO: read from env vars
+# Delete ourselves after a two hour timeout
+export NAME=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/name -H 'Metadata-Flavor: Google')
+export ZONE=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/zone -H 'Metadata-Flavor: Google')
+$(sleep 7200s && gcloud --quiet compute instances delete $NAME --zone=$ZONE)&
+
+# Declare the branch to use to run code
 readonly BRANCH=appengine
 
 # Install dependencies using the package manager
 export DEBIAN_FRONTEND=noninteractive
-# sudo apt-get update -yq && sudo apt-get install -yq git python3 python3-pip python3-venv
 sudo apt-get update -yq && sudo apt-get install -yq git wget curl
 
 function install_python {
