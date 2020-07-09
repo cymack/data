@@ -16,6 +16,7 @@ import os
 from pathlib import Path
 
 SRC = Path(os.path.dirname(__file__)) / ".."
-URL_OUTPUTS_PROD = "https://storage.googleapis.com/covid19-open-data/v2"
+GCS_BUCKET_TEST = "open-covid-data"
+GCS_BUCKET_PROD = "covid19-open-data"
+URL_OUTPUTS_PROD = f"https://storage.googleapis.com/{GCS_BUCKET_PROD}/v2"
 CACHE_URL = "https://raw.githubusercontent.com/open-covid-19/data/cache"
-APP_ENGINE_URL = "https://github-open-covid-19.ue.r.appspot.com"
