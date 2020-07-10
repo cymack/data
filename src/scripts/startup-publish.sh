@@ -18,14 +18,10 @@
 # Download latest data for all pipelines and publish outputs to GCS prod bucket
 #######################################
 
-# This is brittle but prevents from continuing in case of failure since we don't want to overwrite
-# files in the server if anything went wrong
-set -xe
-
-# Delete ourselves after a two hour timeout
+# Delete ourselves after a one hour timeout
 export NAME=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/name -H 'Metadata-Flavor: Google')
 export ZONE=$(curl -X GET http://metadata.google.internal/computeMetadata/v1/instance/zone -H 'Metadata-Flavor: Google')
-$(sleep 7200s && gcloud --quiet compute instances delete $NAME --zone=$ZONE)&
+$(sleep 3600s && gcloud --quiet compute instances delete $NAME --zone=$ZONE)&
 
 # Declare the branch to use to run code
 readonly BRANCH=appengine

@@ -31,7 +31,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 # pylint: disable=wrong-import-position
 from lib.cast import safe_int_cast
 from lib.concurrent import thread_map
-from lib.constants import SRC, GCS_BUCKET_PROD, GCS_BUCKET_TEST
+from lib.constants import GCS_BUCKET_PROD, GCS_BUCKET_TEST
 from lib.io import export_csv
 from lib.pipeline import DataPipeline
 from lib.pipeline_tools import get_table_names
@@ -64,7 +64,7 @@ def get_storage_bucket(bucket_name: str):
     bucket_env_key = "GCS_BUCKET_NAME"
     bucket_name = bucket_name or os.getenv(bucket_env_key)
     assert bucket_name is not None, f"{bucket_env_key} not set"
-    return client.get_bucket(bucket_name)
+    return client.bucket(bucket_name)
 
 
 def download_folder(bucket_name: str, remote_path: str, local_folder: Path) -> None:
